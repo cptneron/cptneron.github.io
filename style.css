@@ -264,6 +264,39 @@ h1, h2, h3 { font-family: var(--sans); font-weight: 700; margin: 0; color: var(-
   margin: 0;
 }
 
+.repo-badges {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.repo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-soft);
+  border-radius: 99px;
+  padding: 6px 12px;
+  color: var(--text-dim);
+}
+.repo-badge:hover { border-color: var(--border); text-decoration: none; }
+.repo-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  display: inline-block;
+}
+.repo-badge-dot-live {
+  background: var(--accent);
+  box-shadow: 0 0 5px rgba(74,222,128,0.6);
+}
+.repo-badge-label { color: var(--text-faint); }
+.repo-badge-value { color: var(--accent); font-weight: 700; }
+
 @media (prefers-reduced-motion: reduce) {
   .cursor-blink { animation: none; }
 }
