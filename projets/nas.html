@@ -23,66 +23,117 @@
 <main>
   <section class="section wrap" style="border-top:none; padding-top:48px;">
     <div class="section-head">
-      <span class="eyebrow">// projet</span>
+      <span class="eyebrow">// projet — journal chronologique</span>
       <h2>Infrastructure domestique (NAS / homelab)</h2>
-      <p class="section-desc">Linux · Docker · réseau · stockage — en production depuis 2023</p>
+      <p class="section-desc">OpenMediaVault · Docker · réseau · accès distant — repris et restructuré en 2024</p>
     </div>
 
     <div class="log-entry" style="margin-bottom: 24px;">
-      <h3>Contexte</h3>
-      <p class="log-desc" style="margin-bottom:0;">
-        Reprise et reconstruction d'un serveur NAS hérité, sous OpenMediaVault (Debian). L'objectif :
-        un système de stockage fiable, une stack applicative de gestion de médias entièrement
-        conteneurisée, et un accès distant sécurisé — administré en autonomie complète, sans formation
-        préalable, par lecture de documentation et résolution de problèmes réels.
-      </p>
-    </div>
-
-    <div class="log-entry" style="margin-bottom: 24px;">
-      <h3>Stockage &amp; système</h3>
+      <div class="log-meta">
+        <span class="log-status status-prod">point de départ</span>
+        <span class="log-date">avril 2024</span>
+      </div>
+      <h3>Récupération du NAS familial</h3>
       <p class="log-desc">
-        Organisation de plusieurs disques en RAID, répartition des volumes par fonction (films, séries,
-        musique, système), réorganisation et relabeling après plusieurs itérations pour fiabiliser
-        la structure. Surveillance de l'état des disques (données SMART) suite à des incidents.
+        J'ai récupéré le NAS familial — un serveur que mon père et moi avions configuré ensemble quelques
+        années auparavant sous OpenMediaVault (Debian). En le récupérant, les disques étaient
+        désorganisés et l'écosystème en place (Plex) n'était plus adapté à nos usages. Point de départ :
+        remettre de l'ordre, puis repenser l'ensemble.
       </p>
       <ul class="log-tags">
-        <li>OpenMediaVault</li><li>Debian</li><li>RAID</li><li>SMART</li>
+        <li>OpenMediaVault</li><li>Debian</li><li>Réorganisation disques</li><li>RAID</li>
       </ul>
     </div>
 
     <div class="log-entry" style="margin-bottom: 24px;">
-      <h3>Conteneurisation</h3>
+      <div class="log-meta">
+        <span class="log-status status-prod">étape 1</span>
+        <span class="log-date">avril — mai 2024</span>
+      </div>
+      <h3>Choix d'un nouvel écosystème — migration vers Jellyfin</h3>
       <p class="log-desc">
-        Déploiement et maintenance d'une stack Docker d'une dizaine de services interconnectés
-        (gestion de médias, indexation, téléchargement, supervision), avec gestion des volumes,
-        des variables d'environnement, et des dépendances entre conteneurs via Docker Compose.
-        Diagnostic de conflits de ressources entre services lors d'incidents de charge CPU.
+        Plex était payant et fermé. En cherchant une alternative open source, j'ai découvert Jellyfin
+        et décidé de l'adopter. C'est cette décision qui m'a poussé à apprendre Docker : Jellyfin
+        se déploie en conteneur, ce qui m'a obligé à comprendre les volumes, les ports, les variables
+        d'environnement, et les dépendances entre services. Progressivement, j'ai ajouté d'autres
+        conteneurs autour — gestion automatisée des médias, indexation, téléchargements — jusqu'à
+        obtenir une stack d'une dizaine de services interconnectés via Docker Compose.
       </p>
       <ul class="log-tags">
-        <li>Docker</li><li>Docker Compose</li><li>Gestion de volumes</li>
+        <li>Jellyfin</li><li>Docker</li><li>Docker Compose</li><li>Stack média</li>
       </ul>
     </div>
 
     <div class="log-entry" style="margin-bottom: 24px;">
-      <h3>Réseau &amp; accès distant</h3>
+      <div class="log-meta">
+        <span class="log-status status-prod">étape 2</span>
+        <span class="log-date">mai — juin 2024</span>
+      </div>
+      <h3>Accès distant sécurisé — DuckDNS &amp; Nginx Proxy Manager</h3>
       <p class="log-desc">
-        Mise en place d'un reverse proxy pour exposer plusieurs services sous des noms de domaine
-        distincts, configuration DNS dynamique, tunnel VPN pour les flux nécessitant un anonymat
-        réseau, ouverture et sécurisation sélective de ports.
+        Une fois la stack en place localement, j'ai voulu la rendre accessible depuis l'extérieur
+        du réseau. Première contrainte : mon IP domestique change régulièrement — j'ai résolu ça avec
+        DuckDNS, qui maintient un nom de domaine stable pointant toujours vers ma vraie adresse.
+        Deuxième contrainte : on ne peut pas exposer un serveur directement sur Internet sans
+        intermédiaire. J'ai mis en place Nginx Proxy Manager comme reverse proxy, qui centralise
+        les accès, redirige les requêtes vers le bon conteneur selon le domaine demandé, et gère
+        les certificats HTTPS automatiquement. J'ai aussi créé et configuré les comptes utilisateurs
+        pour contrôler qui peut accéder à quoi depuis l'extérieur.
       </p>
       <ul class="log-tags">
-        <li>Reverse proxy</li><li>DNS dynamique</li><li>VPN</li><li>Pare-feu</li>
+        <li>DuckDNS</li><li>Nginx Proxy Manager</li><li>HTTPS</li><li>Reverse proxy</li><li>Gestion utilisateurs</li>
+      </ul>
+    </div>
+
+    <div class="log-entry" style="margin-bottom: 24px;">
+      <div class="log-meta">
+        <span class="log-status status-prod">étape 3</span>
+        <span class="log-date">juin 2024</span>
+      </div>
+      <h3>Déploiement de RoonServer — et premières limites de la machine</h3>
+      <p class="log-desc">
+        En parallèle de la stack média, j'ai déployé RoonServer — un écosystème de lecture audio
+        assez lourd en ressources — sur la même machine. Cette décision a commencé à créer des
+        problèmes de performance : pics d'utilisation CPU et d'attente I/O, premiers crashs système.
+        C'est à ce stade que j'ai commencé à me confronter à quelque chose que je ne savais pas encore
+        faire : diagnostiquer un système en production à partir de ses journaux.
+      </p>
+      <ul class="log-tags">
+        <li>RoonServer</li><li>Performance</li><li>Ressources système</li>
+      </ul>
+    </div>
+
+    <div class="log-entry" style="margin-bottom: 24px;">
+      <div class="log-meta">
+        <span class="log-status status-open">en cours</span>
+        <span class="log-date">2024 — aujourd'hui</span>
+      </div>
+      <h3>Crashs récurrents — apprentissage du diagnostic système</h3>
+      <p class="log-desc">
+        Les crashs persistent. J'ai commencé à apprendre à lire les journaux système (journalctl,
+        données SMART des disques) pour comprendre ce qui se passe. J'ai identifié des pics sévères
+        d'attente I/O précédant les reboots noyau, mais je n'ai pas encore isolé la cause racine
+        avec suffisamment de rigueur. Je sais collecter les informations — je ne sais pas encore
+        les analyser jusqu'au bout.
+      </p>
+      <ul class="log-tags">
+        <li>journalctl</li><li>SMART</li><li>Diagnostic</li><li>I/O wait</li>
       </ul>
     </div>
 
     <div class="log-entry">
-      <h3>Ce que ce projet a appris</h3>
+      <div class="log-meta">
+        <span class="log-status status-planned">conclusion</span>
+      </div>
+      <h3>Ce que ce projet m'a réellement appris</h3>
       <p class="log-desc" style="margin-bottom:0;">
-        La différence entre suivre une procédure et comprendre pourquoi elle fonctionne. Une bonne
-        partie du travail initial consistait à appliquer des configurations trouvées en ligne sans
-        toujours en maîtriser chaque rouage — une limite identifiée consciemment, et le moteur direct
-        du projet de formation actuel : structurer cette pratique par une base théorique solide
-        (réseau, systèmes Windows Server, sécurité) plutôt que de rester sur de l'empirisme.
+        Chaque étape de ce projet a été motivée par un besoin concret, pas par une liste de choses
+        à apprendre. Docker parce que Jellyfin le nécessitait. Le reverse proxy parce qu'on ne peut
+        pas exposer un serveur nu sur Internet. Les logs parce que la machine crashait. C'est cette
+        logique de problème → solution → compréhension qui m'a donné envie de formaliser cette
+        pratique par une vraie formation. L'écart entre ce que je sais faire et ce que je comprends
+        réellement — illustré par les crashs non encore résolus — est précisément ce que le Bachelor
+        Administrateur Systèmes et Réseaux doit combler.
       </p>
     </div>
 
