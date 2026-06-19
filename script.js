@@ -22,8 +22,8 @@ if (updatedEl) {
   updatedEl.textContent = new Date().toLocaleDateString('fr-FR', opts);
 }
 
-const GITHUB_OWNER = 'cptneron';
-const GITHUB_REPO = 'cptneron.github.io';
+const GITHUB_OWNER = 'nloupia';
+const GITHUB_REPO = 'nloupia.github.io';
 
 function formatRelativeDate(dateStr) {
   const date = new Date(dateStr);
