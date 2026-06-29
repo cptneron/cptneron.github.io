@@ -118,7 +118,7 @@
     margin-bottom: 20px;
   }
 
-  /* Bloc GreenIT — encart mis en valeur */
+  /* Bloc GreenIT */
   .greenblock {
     background: linear-gradient(135deg, rgba(52,211,153,.06) 0%, rgba(74,222,128,.03) 100%);
     border: 1px solid rgba(74,222,128,.25);
@@ -161,7 +161,7 @@
     font-weight: 500;
   }
 
-  /* Entrées de log (chapitres) */
+  /* Entrées de log */
   .log-entry {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -183,8 +183,10 @@
     border: 1px solid;
     letter-spacing: .05em;
   }
-  .status-prod { color: var(--green); border-color: var(--green); background: rgba(74,222,128,.08); }
-  .status-diag { color: #F59E0B;      border-color: #F59E0B;      background: rgba(245,158,11,.08); }
+  .status-prod    { color: var(--green); border-color: var(--green); background: rgba(74,222,128,.08); }
+  .status-diag    { color: #F59E0B;      border-color: #F59E0B;      background: rgba(245,158,11,.08); }
+  .status-resolved{ color: #34D399;      border-color: #34D399;      background: rgba(52,211,153,.08); }
+  .status-sec     { color: #58A6FF;      border-color: #58A6FF;      background: rgba(88,166,255,.08); }
   .log-date { font-family: var(--mono); font-size: 11px; color: var(--muted); }
   .log-entry h3 {
     font-size: 15px;
@@ -209,8 +211,22 @@
     color: var(--muted);
     background: rgba(255,255,255,.02);
   }
+  .log-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--green);
+    border: 1px solid var(--green-dim);
+    background: rgba(74,222,128,.05);
+    padding: 4px 12px;
+    border-radius: 4px;
+  }
+  .log-link:hover { background: rgba(74,222,128,.12); text-decoration: none; }
 
-  /* Bloc stack */
+  /* Stack grid */
   .stack-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -253,7 +269,6 @@
 <main>
   <div class="wrap">
 
-    <!-- En-tête de page -->
     <div class="page-header">
       <span class="eyebrow">// projet — journal chronologique</span>
       <h1>Infrastructure domestique (NAS / homelab)</h1>
@@ -265,9 +280,6 @@
       </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════
-         BLOC GREENÍT — philosophie du projet
-    ════════════════════════════════════════════ -->
     <div class="greenblock">
       <div class="greenblock-header">
         <span class="greenblock-label">// philosophie</span>
@@ -285,9 +297,6 @@
       </p>
     </div>
 
-    <!-- ═══════════════════════════════════════════
-         CHAPITRE 1 — Récupération
-    ════════════════════════════════════════════ -->
     <div class="section">
       <p class="section-title">// arc chronologique</p>
 
@@ -308,9 +317,6 @@
         </ul>
       </div>
 
-      <!-- ═══════════════════════════════════════════
-           CHAPITRE 2 — Migration Jellyfin
-      ════════════════════════════════════════════ -->
       <div class="log-entry">
         <div class="log-meta">
           <span class="log-status status-prod">étape 1</span>
@@ -339,9 +345,6 @@
         </ul>
       </div>
 
-      <!-- ═══════════════════════════════════════════
-           CHAPITRE 3 — Accès distant
-      ════════════════════════════════════════════ -->
       <div class="log-entry">
         <div class="log-meta">
           <span class="log-status status-prod">étape 2</span>
@@ -359,9 +362,6 @@
         </ul>
       </div>
 
-      <!-- ═══════════════════════════════════════════
-           CHAPITRE 4 — RoonServer + crash
-      ════════════════════════════════════════════ -->
       <div class="log-entry">
         <div class="log-meta">
           <span class="log-status status-diag">incident actif</span>
@@ -384,11 +384,62 @@
           <li>RoonServer</li><li>journalctl</li><li>SMART</li><li>Monit</li><li>I/O wait</li><li>Diagnostic en cours</li>
         </ul>
       </div>
+
+      <!-- INCIDENT RADARR -->
+      <div class="log-entry">
+        <div class="log-meta">
+          <span class="log-status status-resolved">incident résolu</span>
+          <span class="log-date">22–29 juin 2026</span>
+        </div>
+        <h3>Suppression silencieuse de ~100 films — diagnostic et récupération</h3>
+        <p>
+          La bibliothèque Radarr s'est vidée progressivement sur 5 jours sans alerte visible.
+          Le diagnostic a révélé deux causes imbriquées : un volume <code>/movies</code> non remonté
+          après recréation du conteneur (Radarr interprète l'absence de fichiers comme une suppression réelle),
+          et un job <strong>USB Backup OMV</strong> exécutant un <code>rsync --delete</code> sur le disque
+          de stockage films à chaque démarrage. Ce dernier écrasait silencieusement tout fichier
+          non présent dans la source de backup.
+        </p>
+        <p style="margin-top:10px;">
+          Récupération à ~80% via <code>rsync</code> depuis les torrents encore en seed dans Transmission.
+          Correction : désactivation du service systemd USB Backup, restructuration du compose Radarr
+          avec un seul root folder, déploiement de Dozzle pour le monitoring des logs Docker.
+        </p>
+        <ul class="log-tags">
+          <li>Radarr</li><li>rsync --delete</li><li>OMV USB Backup</li><li>systemd</li>
+          <li>docker-compose</li><li>journalctl</li><li>Dozzle</li><li>Récupération de données</li>
+        </ul>
+        <a href="incident-radarr-usb-backup.html" class="log-link">→ rapport d'incident complet</a>
+      </div>
+
+      <!-- SECURITE IPv6 -->
+      <div class="log-entry">
+        <div class="log-meta">
+          <span class="log-status status-sec">audit sécurité</span>
+          <span class="log-date">29 juin 2026</span>
+        </div>
+        <h3>Exposition non filtrée du NAS en IPv6 — découverte et durcissement</h3>
+        <p>
+          Un utilisateur de confiance ayant effectué un scan Nmap sur l'IP publique du NAS a révélé
+          que tous les ports étaient accessibles depuis Internet via IPv6. En IPv4, la Freebox fait
+          office de firewall implicite via NAT — seul le port <code>32769</code> est forwardé.
+          En IPv6, le NAS est directement routable, et <code>ip6tables</code> était en
+          <code>policy ACCEPT</code> sans aucune règle : Portainer, OMV, Radarr, Samba,
+          Transmission — tout était exposé.
+        </p>
+        <p style="margin-top:10px;">
+          Correction en moins d'une heure : mise en place de règles ip6tables (DROP par défaut,
+          autorisation sélective des ports 32769 et 8322), persistance via <code>iptables-persistent</code>.
+        </p>
+        <ul class="log-tags">
+          <li>ip6tables</li><li>IPv6</li><li>Nmap</li><li>Pentest</li>
+          <li>iptables-persistent</li><li>Surface d'attaque</li><li>Hardening</li>
+        </ul>
+        <a href="securite-ipv6.html" class="log-link">→ rapport d'audit complet</a>
+      </div>
+
     </div>
 
-    <!-- ═══════════════════════════════════════════
-         POURQUOI DOCUMENTER UN INCIDENT NON RÉSOLU
-    ════════════════════════════════════════════ -->
     <div class="section">
       <p class="section-title">// pourquoi documenter un incident non résolu</p>
       <p style="font-size:14px; color:var(--text); line-height:1.8;">
@@ -401,7 +452,7 @@
       </p>
     </div>
 
-  </div><!-- /.wrap -->
+  </div>
 </main>
 
 <footer>
